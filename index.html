@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Second Look — check a suspicious message</title>
+<meta name="description" content="Paste a suspicious text, email, or link and get a plain-language explanation of anything that looks off. Nothing you paste ever leaves your device.">
+<style>
+  :root {
+    --paper: #FAF7F2;
+    --card: #F1ECE1;
+    --ink: #232B2B;
+    --ink-soft: #4B5555;
+    --teal: #0F5C5C;
+    --teal-dark: #0A4444;
+    --amber: #B8722C;
+    --amber-bg: #FBF0E1;
+    --sage: #4B7C63;
+    --sage-bg: #EDF3EE;
+    --rule: #DDD6C8;
+    --focus: #0F5C5C;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: ui-serif, Georgia, "Times New Roman", serif;
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+
+  header {
+    margin-bottom: 40px;
+  }
+
+  h1 {
+    font-size: 2.1rem;
+    line-height: 1.15;
+    margin: 0 0 12px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .lede {
+    font-size: 1.15rem;
+    color: var(--ink-soft);
+    margin: 0;
+    max-width: 46ch;
+  }
+
+  .privacy-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 14px 16px;
+    background: var(--sage-bg);
+    border-left: 3px solid var(--sage);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.98rem;
+    color: var(--ink);
+  }
+
+  .privacy-note svg { flex: none; margin-top: 2px; }
+
+  main {
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+
+  label {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 16px;
+    font-size: 1.1rem;
+    font-family: inherit;
+    line-height: 1.5;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    resize: vertical;
+  }
+
+  textarea:focus-visible, button:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .check-button {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 14px 28px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: inherit;
+    color: #fff;
+    background: var(--teal);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .check-button:hover { background: var(--teal-dark); }
+  .check-button:disabled { opacity: 0.6; cursor: default; }
+
+  .results { margin-top: 44px; }
+
+  .verdict {
+    padding: 20px 22px;
+    border-radius: 4px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 28px;
+  }
+
+  .verdict.caution { background: var(--amber-bg); color: #6B4118; border-left: 4px solid var(--amber); }
+  .verdict.clear { background: var(--sage-bg); color: #2E4E3E; border-left: 4px solid var(--sage); }
+
+  .verdict p {
+    margin: 8px 0 0;
+    font-size: 0.98rem;
+    font-weight: 400;
+  }
+
+  .findings-heading {
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: none;
+    color: var(--ink-soft);
+    margin: 0 0 14px;
+  }
+
+  .finding {
+    padding: 14px 0 14px 16px;
+    border-left: 3px solid var(--amber);
+    margin-bottom: 4px;
+  }
+
+  .finding + .finding { border-top: 1px solid var(--rule); }
+
+  .finding-label {
+    font-weight: 600;
+    margin: 0 0 6px;
+    font-size: 1.02rem;
+  }
+
+  .finding-explanation {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.98rem;
+  }
+
+  .next-steps {
+    margin-top: 36px;
+    padding: 20px 22px;
+    background: var(--card);
+    border-radius: 4px;
+  }
+
+  .next-steps h2 {
+    font-size: 1.05rem;
+    margin: 0 0 12px;
+    font-family: ui-serif, Georgia, serif;
+  }
+
+  .next-steps ul { margin: 0; padding-left: 20px; }
+  .next-steps li { margin-bottom: 8px; }
+  .next-steps li:last-child { margin-bottom: 0; }
+
+  footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+  }
+
+  footer a { color: var(--teal-dark); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Is this message safe?</h1>
+    <p class="lede">Paste a suspicious text, email, or link below. We'll point out anything that looks like a common scam pattern, in plain language.</p>
+    <div class="privacy-note">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M9 1l6.5 2.6v4.2c0 4.1-2.7 7.6-6.5 8.7-3.8-1.1-6.5-4.6-6.5-8.7V3.6L9 1z" stroke="#4B7C63" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      <span>Nothing you paste here is ever sent anywhere. This runs entirely on your own device.</span>
+    </div>
+  </header>
+
+  <main>
+    <label for="message-input">Paste the message here</label>
+    <textarea id="message-input" placeholder="Paste the text, email, or link you want to check…"></textarea>
+    <br>
+    <button type="button" class="check-button" id="check-button">Check this message</button>
+
+    <div class="results" id="results" hidden aria-live="polite"></div>
+  </main>
+
+  <footer>
+    <p>Second Look looks for common warning signs — it can't catch every scam, and it can occasionally flag a real message that happens to sound urgent (a real bank fraud alert, for example). If you're ever unsure, contact the company directly using a phone number or website you look up yourself, never one from the message.</p>
+    <p><a href="https://github.com/tusharnagar2002/second-look">How this works, and the source code</a></p>
+  </footer>
+
+</div>
+
+<script src="scam-detector.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  const input = document.getElementById("message-input");
+  const button = document.getElementById("check-button");
+  const results = document.getElementById("results");
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function render(analysis) {
+    const total = analysis.totalFindings;
+    results.hidden = false;
+
+    let html = "";
+
+    if (total === 0) {
+      html += `
+        <div class="verdict clear">
+          No common warning signs found.
+          <p>This doesn't guarantee the message is genuine — it just means it didn't match the patterns this tool knows to look for. If something still feels off, trust that instinct.</p>
+        </div>`;
+    } else {
+      const noun = total === 1 ? "warning sign" : "warning signs";
+      html += `
+        <div class="verdict caution">
+          ${total} ${noun} found — worth a closer look before you respond.
+          <p>None of this proves it's a scam on its own, but together these are patterns real scams commonly use.</p>
+        </div>`;
+    }
+
+    if (analysis.signals.length > 0) {
+      html += `<p class="findings-heading">What we noticed in the message:</p>`;
+      for (const signal of analysis.signals) {
+        html += `
+          <div class="finding">
+            <p class="finding-label">${escapeHtml(signal.label)}</p>
+            <p class="finding-explanation">${escapeHtml(signal.explanation)}</p>
+          </div>`;
+      }
+    }
+
+    if (analysis.urlFindings.length > 0) {
+      html += `<p class="findings-heading" style="margin-top:24px;">About the link${analysis.urlFindings.length > 1 ? "s" : ""} in this message:</p>`;
+      for (const result of analysis.urlFindings) {
+        for (const finding of result.findings) {
+          html += `
+            <div class="finding">
+              <p class="finding-label">${escapeHtml(result.url)}</p>
+              <p class="finding-explanation">${escapeHtml(finding)}</p>
+            </div>`;
+        }
+      }
+    }
+
+    html += `
+      <div class="next-steps">
+        <h2>What to do next</h2>
+        <ul>
+          <li>Don't click any links or call any numbers in the message itself.</li>
+          <li>If it claims to be from a company or bank you actually use, contact them using the number on your card or their real website — typed in yourself, not copied from the message.</li>
+          <li>If you're not sure, ask someone you trust before responding. There's no shame in double-checking.</li>
+        </ul>
+      </div>`;
+
+    results.innerHTML = html;
+    results.setAttribute("tabindex", "-1");
+    results.focus();
+  }
+
+  button.addEventListener("click", function () {
+    const text = input.value.trim();
+    if (!text) {
+      input.focus();
+      return;
+    }
+    const analysis = ScamDetector.analyzeMessage(text);
+    render(analysis);
+  });
+
+  input.addEventListener("keydown", function (event) {
+    if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+      button.click();
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "second-look",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Paste a suspicious message and get a plain-language explanation of anything that looks like a scam. Runs entirely in your browser -- nothing you paste is ever sent anywhere.",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^30.0.1"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tusharnagar2002/second-look.git"
+  }
+}
